@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Profile — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="pf.title">Profil</h2>
+  <div id="view" class="online-panel"></div>
+  <div id="edit" class="online-panel hidden">
+    <h3 data-i18n="pf.title">Profil</h3>
+    <div class="online-row">
+      <label><span data-i18n="pf.first">Prenume</span><input id="f_first" maxlength="40"></label>
+      <label><span data-i18n="pf.last">Nume</span><input id="f_last" maxlength="40"></label>
+      <label><span data-i18n="pf.lang">Limbă</span><select id="f_lang"><option value="ro">RO</option><option value="en">EN</option><option value="ru">RU</option></select></label>
+    </div>
+    <div class="online-row">
+      <label><input type="checkbox" id="f_sf"> <span data-i18n="pf.showF"></span></label>
+      <label><input type="checkbox" id="f_sl"> <span data-i18n="pf.showL"></span></label>
+      <label><input type="checkbox" id="f_sm"> <span data-i18n="pf.showM"></span></label>
+      <label><input type="checkbox" id="f_ss"> <span data-i18n="pf.showS"></span></label>
+    </div>
+    <div class="online-row"><button id="save" class="btn small" data-i18n="pf.save">Salvează</button><span id="msg" class="hint"></span></div>
+    <div class="online-row"><button id="buy" class="btn small ghost-btn" data-i18n="pf.buy"></button></div>
+    <h3 data-i18n="pf.del">Șterge</h3>
+    <p class="hint" data-i18n="pf.delh"></p>
+    <div class="online-row">
+      <label><span data-i18n="au.pass">Parolă</span><input id="delpass" type="password"></label>
+      <button id="del" class="btn small ghost-btn" data-i18n="pf.del"></button>
+    </div>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  const q = new URLSearchParams(location.search).get('u');
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+  let meUser = null, shown = null;
+  ws.onopen = () => ws.send(JSON.stringify({t:'hello', token: (window.Session ? Session.get().token : null) || '', lang: window.LANG}));
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.t === 'auth') {
+      if (window.Session) Session.save(m);
+      meUser = m.user;
+      if (!q && meUser) { shown = meUser; render(true); }
+      else if (!q) document.getElementById('view').innerHTML = `<a href="play.html">${T('au.login')}</a>`;
+      if (q) ws.send(JSON.stringify({t:'viewProfile', user:q}));
+    }
+    else if (m.t === 'profile') { shown = m.user; render(meUser && meUser.name === m.user.name); }
+    else if (m.t === 'deleteSent') { document.getElementById('msg').textContent = T('pf.delsent'); }
+    else if (m.t === 'error') { document.getElementById('view').textContent = '⚠ ' + m.reason; }
+  };
+  function render(own) {
+    const u = shown; if (!u) return;
+    const v = document.getElementById('view');
+    const when = u.memberSince ? new Date(u.memberSince).toLocaleDateString() : '';
+    v.innerHTML = `<h3>👤 ${u.firstName ? u.firstName+' ' : ''}@${u.name} ${u.premium?'⭐':''}</h3>
+      <div>Nv ${u.level} ${u.levelName||''}${u.rating!==undefined?` • ⭐ ${u.rating} • ${u.wins}W/${u.games}`:''}</div>
+      ${u.lastName?`<div>${u.lastName}</div>`:''}${u.email?`<div>${u.email}</div>`:''}
+      <div class="hint">${T('pf.member')} ${when}</div>`;
+    if (own) {
+      document.getElementById('edit').classList.remove('hidden');
+      document.getElementById('f_first').value = u.firstName||'';
+      document.getElementById('f_last').value = u.lastName||'';
+      document.getElementById('buy').style.display = u.premium ? 'none' : '';
+    }
+  }
+  document.getElementById('save').addEventListener('click', () => {
+    ws.send(JSON.stringify({t:'updateProfile', firstName:document.getElementById('f_first').value, lastName:document.getElementById('f_last').value,
+      show:{first:document.getElementById('f_sf').checked, last:document.getElementById('f_sl').checked, email:document.getElementById('f_sm').checked, stats:document.getElementById('f_ss').checked},
+      lang:document.getElementById('f_lang').value}));
+    document.getElementById('msg').textContent = T('pf.saved');
+    setLang(document.getElementById('f_lang').value);
+  });
+  document.getElementById('buy').addEventListener('click', () => ws.send(JSON.stringify({t:'buyPremium'})));
+  document.getElementById('del').addEventListener('click', () => ws.send(JSON.stringify({t:'deleteAccount', password:document.getElementById('delpass').value})));
+})();
+</script>
+</body></html>

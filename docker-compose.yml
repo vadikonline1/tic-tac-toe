@@ -1,0 +1,17 @@
+services:
+  tic-tak-tok:
+    build: .
+    image: ghcr.io/vadikonline1/tic-tac-toe:latest
+    env_file: .env
+    environment:
+      PORT: ${PORT:-8000}
+    ports:
+      - "${PORT:-8000}:8000"
+    volumes:
+      - ./users.json:/app/users.json
+      - ./sessions.json:/app/sessions.json
+      - ./ads.json:/app/ads.json
+      - ./config.json:/app/config.json
+      - ./ads.txt:/app/ads.txt
+      - ./outbox:/app/outbox
+    restart: unless-stopped

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Rating — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section"><h2 data-i18n="rt.title"></h2><p class="subtitle" data-i18n="rt.sub"></p>
+<div class="online-row"><label><span data-i18n="rt.search">Caută…</span><input id="q" data-i18n-ph="rt.search"></label><button id="go" class="btn small">OK</button></div>
+<div id="list" class="tables"></div></main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="dtable.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+  ws.onopen = () => load('');
+  function load(q){ ws.send(JSON.stringify({t:'leaderboard', q, limit:50})); }
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.t !== 'leaderboard') return;
+    const cols = [
+      { t: T('rt.rank'), w: '2.5em' },
+      { t: T('rt.player'), w: '2fr' },
+      { t: T('rt.level'), w: '1fr' },
+      { t: T('rt.rating'), w: '1fr' },
+      { t: T('rt.games'), w: '1fr' },
+      { t: T('rt.wins'), w: '1fr' },
+      { t: '', w: 'auto' },
+    ];
+    const rows = m.list.map((u, i) => [
+      '#' + (i + 1),
+      u.name,
+      `Nv ${u.level} ${u.levelName || ''}`,
+      '⭐ ' + u.rating,
+      u.games,
+      u.wins,
+      { a: { href: 'profile.html?u=' + encodeURIComponent(u.name), text: '→' } },
+    ]);
+    DTable(document.getElementById('list'), cols, rows, '—');
+  };
+  document.getElementById('go').addEventListener('click', () => load(document.getElementById('q').value));
+  document.getElementById('q').addEventListener('keydown', e => { if (e.key==='Enter') load(e.target.value); });
+})();
+</script>
+</body></html>

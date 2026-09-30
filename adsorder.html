@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Ads — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="ao.title"></h2>
+  <p class="subtitle" data-i18n="ao.sub"></p>
+  <div class="online-panel" id="needLogin"><span data-i18n="au.need"></span> <a href="play.html">→</a></div>
+  <div class="online-panel hidden" id="form">
+    <div class="online-row">
+      <label><span data-i18n="ao.atitle">Titlu</span><input id="a_title" maxlength="60"></label>
+      <label><span data-i18n="ao.img">Imagine</span><input id="a_img" placeholder="https://…"></label>
+    </div>
+    <div class="online-row">
+      <label><span data-i18n="ao.link">Link</span><input id="a_link" placeholder="https://…"></label>
+      <label><span data-i18n="ao.slot">Poziție</span><select id="a_slot"><option value="side">side</option><option value="hero">hero</option></select></label>
+      <label><span data-i18n="ao.start">Start</span><input id="a_start" type="date"></label>
+      <label><span data-i18n="ao.end">End</span><input id="a_end" type="date"></label>
+    </div>
+    <div class="online-row"><button id="send" class="btn small" data-i18n="ao.send"></button><span id="msg" class="hint"></span></div>
+  </div>
+  <div class="online-panel ads-admin hidden" id="demoPanel">
+    <h3>👁 ADS demo <button id="adsDemoBtn" class="btn small ghost-btn">OFF</button></h3>
+    <p class="hint">Preview cum arată reclamele pe site (doar demo, nu se salvează).</p>
+    <div id="demoSlots" class="hidden">
+      <div class="adslot"><span class="adtag">Ad · demo</span><span class="adtext">🪆 TIC-TAK-TOK Premium — joacă fără reclame!</span></div>
+      <br>
+      <div class="adslot" style="max-width:300px"><span class="adtag">Ad · demo</span><span class="adtext">Turneul de weekend 🏆</span></div>
+    </div>
+  </div>
+  <div class="online-panel ads-admin hidden" id="livePanel">
+    <h3>📢 <span>Reclame utilizatori (active acum)</span></h3>
+    <div id="liveAds" class="tables"><p class="hint">…</p></div>
+  </div>
+  <div class="online-panel ads-admin hidden" id="sensePanel">
+    <h3>🔌 Google AdSense</h3>
+    <div id="adsenseStatus" class="net-status">…</div>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="dtable.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+  ws.onopen = () => ws.send(JSON.stringify({t:'hello', token: (window.Session ? Session.get().token : null) || ''}));
+  let adsAsked = false;
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.t === 'auth') {
+      if (window.Session) Session.save(m);
+      if (m.user) { document.getElementById('needLogin').classList.add('hidden'); document.getElementById('form').classList.remove('hidden'); }
+      const admin = (m.role || (m.isAdmin ? 'admin' : (m.user ? 'user' : 'guest'))) === 'admin';
+      document.querySelectorAll('.ads-admin').forEach(el => el.classList.toggle('hidden', !admin));
+      if (!adsAsked) { adsAsked = true; ws.send(JSON.stringify({ t: 'ads' })); }
+    }
+    else if (m.t === 'adOrdered') { document.getElementById('msg').textContent = T('ao.sent') + ' ' + m.id; }
+    else if (m.t === 'ads') {
+      if (!window.DTable) return;
+      const rows = (m.list || []).map(o => [
+        o.title,
+        o.slot,
+        { a: { href: o.link, text: o.link, blank: true } },
+      ]);
+      DTable(document.getElementById('liveAds'), [
+        { t: T('ao.atitle'), w: '2fr' },
+        { t: T('ao.slot'), w: 'auto' },
+        { t: T('ao.link'), w: '2fr' },
+      ], rows, '—');
+      document.getElementById('adsenseStatus').textContent = 'Google AdSense: ' + ((m.adsenseSnippet || m.adsense) ? ('✔ ' + (m.adsense || 'snippet')) : '✘ ' + T('ad.off'));
+    }
+    else if (m.t === 'error') { document.getElementById('msg').textContent = '⚠ ' + m.reason; }
+  };
+  // demo ON/OFF
+  const demoBtn = document.getElementById('adsDemoBtn');
+  function paintDemo() {
+    const on = localStorage.getItem('tic_ads_demo') === 'on';
+    demoBtn.textContent = on ? 'ON' : 'OFF';
+    document.getElementById('demoSlots').classList.toggle('hidden', !on);
+  }
+  demoBtn.addEventListener('click', () => {
+    localStorage.setItem('tic_ads_demo', localStorage.getItem('tic_ads_demo') === 'on' ? 'off' : 'on');
+    paintDemo();
+  });
+  paintDemo();
+  document.getElementById('send').addEventListener('click', () => {
+    ws.send(JSON.stringify({t:'adOrder', title:document.getElementById('a_title').value, img:document.getElementById('a_img').value,
+      link:document.getElementById('a_link').value, slot:document.getElementById('a_slot').value,
+      start:document.getElementById('a_start').value, end:document.getElementById('a_end').value}));
+  });
+})();
+</script>
+</body></html>

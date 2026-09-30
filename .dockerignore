@@ -1,0 +1,7 @@
+node_modules/
+outbox/
+users.json
+sessions.json
+ads.json
+.env
+npm-debug.log

@@ -1,0 +1,14 @@
+{
+  "name": "matroshka-tic-tac-toe",
+  "version": "0.2.0",
+  "description": "Tic-Tak-Tok Tic-Tac-Toe — server WS camere + chat (retea locala)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "web": "node server.js"
+  },
+  "dependencies": {
+    "nodemailer": "^10.0.13",
+    "ws": "^8.18.0"
+  }
+}

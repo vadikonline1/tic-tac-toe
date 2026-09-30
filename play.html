@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play — TIC-TAK-TOK</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+
+<main class="play-section">
+  <h2>🪆 TIC-TAK-TOK</h2>
+
+  <div class="mode-tabs">
+    <button id="tabLocal" class="tab active">👥 Local</button>
+    <button id="tabBot" class="tab">🤖 Bot</button>
+    <button id="tabOnline" class="tab">🌐 Online</button>
+    <button id="tabTop" class="tab">🏆 Top</button>
+    <button id="tabCreate" class="tab">＋ Masă</button>
+  </div>
+
+  <div id="localOpts" class="online-panel">
+    <div class="online-row">
+      <label><span data-i18n="lb.size">Tabla</span>
+        <select id="localSize">
+          <option value="3">3×3</option><option value="4">4×4</option>
+          <option value="5">5×5</option><option value="6">6×6</option>
+        </select>
+      </label>
+      <label id="botLevelWrap" class="hidden"><span>Bot</span>
+        <select id="botLevel">
+          <option value="1">L1</option><option value="2">L2</option><option value="3" selected>L3</option>
+          <option value="4">L4</option><option value="5">L5</option><option value="6">L6</option>
+          <option value="7">L7</option><option value="8">L8</option><option value="9">L9</option><option value="10">L10</option>
+        </select>
+      </label>
+      <label id="playersWrap"><span data-i18n="np.title">Jucători</span>
+        <select id="localPlayers">
+          <option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option>
+        </select>
+      </label>
+      <button id="btnApplyOpts" class="btn small">OK</button>
+    </div>
+    <p class="hint" data-i18n="np.hint"></p>
+  </div>
+
+  <div id="onlineOpts" class="hidden">
+    <div id="authArea" class="online-panel"></div>
+    <div id="rejoinBanner" class="online-panel hidden">
+      <span data-i18n="lb.rejoin"></span>
+      <button id="btnRejoin" class="btn small">→</button>
+    </div>
+    <div id="profileBox" class="online-panel"></div>
+
+    <div id="createView" class="hidden">
+      <div class="online-panel" id="createPanel">
+        <h3>＋ <span data-i18n="lb.create"></span></h3>
+        <div id="createGate" class="hint hidden"><span data-i18n="au.need"></span></div>
+        <div class="online-row" id="createRow">
+          <label><span>Title</span><input id="createTitle" maxlength="30" data-i18n-ph="lb.titlePh"></label>
+          <label><span data-i18n="lb.size">Tabla</span><select id="createSize"><option value="3">3×3</option></select></label>
+          <label><span data-i18n="np.title">Jucători</span><select id="createPlayers"><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label>
+          <button id="btnCreate" class="btn small">＋</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="topView" class="hidden">
+      <div id="leaderBox" class="online-panel"><h3>🏆 Top</h3></div>
+    </div>
+
+    <div id="lobbyView">
+      <div class="online-panel">
+        <h3 data-i18n="lb.open"></h3>
+        <div class="online-row">
+          <label><span data-i18n="lb.codePh">Cod</span><input id="roomInput" maxlength="4" placeholder="XXXX"></label>
+          <button id="btnJoin" class="btn small ghost-btn" data-i18n="lb.join"></button>
+          <button id="btnRefresh" class="btn small ghost-btn" data-i18n="lb.refresh"></button>
+        </div>
+        <div id="netStatus" class="net-status">…</div>
+        <div id="tablesList" class="tables"></div>
+        <p class="hint" data-i18n="lb.only"></p>
+        <p class="hint" data-i18n="lb.lan"></p>
+      </div>
+    </div>
+
+    <div id="roomView" class="hidden">
+      <div class="online-panel room-head">
+        <div>🪆 <b id="roomTitle">—</b> • ID: <b id="roomCode">—</b> • <span data-i18n="rm.you">Tu</span>: <b id="youLabel">—</b></div>
+        <div class="turn-actions">
+          <button id="btnCopy" class="btn small ghost-btn" data-i18n="rm.copy"></button>
+          <button id="btnLeave" class="btn small ghost-btn" data-i18n="rm.leave"></button>
+        </div>
+      </div>
+      <div id="roomLink" class="room-link"></div>
+    </div>
+  </div>
+
+  <div id="boardArea">
+    <div id="matchInfo" class="match-info"></div>
+    <div id="banner" class="banner hidden"></div>
+    <div class="turn-bar">
+      <div id="turnIndicator" class="turn p1-turn">…</div>
+      <div id="turnTimer" class="turn-timer"></div>
+      <div class="turn-actions">
+        <button id="btnRestart" class="btn small">↻</button>
+        <button id="btnSwap" class="btn small ghost-btn">⇄</button>
+        <button id="btnRules" class="btn small ghost-btn">?</button>
+      </div>
+    </div>
+    <div class="game-layout">
+      <div class="board-wrap">
+        <div id="board" class="board"></div>
+        <div id="message" class="message"></div>
+        <div class="log-wrap"><h4>#</h4><ol id="log"></ol></div>
+      </div>
+      <div id="reservesCol" class="reserves-col"></div>
+    </div>
+    <div class="adslot-wrap"><div data-adslot="side"></div></div>
+    <section id="chatSection" class="chat-section hidden">
+      <h3 data-i18n="rm.chat"></h3>
+      <div id="chatBox" class="chat-box"></div>
+      <div class="chat-row">
+        <input id="chatInput" maxlength="300" data-i18n-ph="rm.ph">
+        <button id="btnSend" class="btn small" data-i18n="rm.send"></button>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer><p>🪆 TIC-TAK-TOK •
+  <a href="gdpr.html" data-i18n="nav.gdpr">GDPR</a> ·
+  <a href="rating.html" data-i18n="nav.rating">Rating</a> ·
+  <a href="users.html" data-i18n="nav.users"></a> ·
+  <a href="adsorder.html" data-i18n="nav.ads"></a> ·
+  <a href="admin.html" data-i18n="nav.admin">Admin</a></p></footer>
+
+<div id="rematchModal" class="modal hidden">
+  <div class="modal-box">
+    <h3 data-i18n="mr.title"></h3>
+    <p id="rematchText"></p>
+    <p id="rematchVotes" class="hint"></p>
+    <div id="rematchAd" class="adslot hidden" style="margin:8px 0"></div>
+    <div class="hero-btns">
+      <button id="btnRematchYes" class="btn primary" data-i18n="mr.yes"></button>
+      <button id="btnRematchNo" class="btn ghost" data-i18n="mr.no"></button>
+    </div>
+  </div>
+</div>
+
+<div id="rulesModal" class="modal hidden">
+  <div class="modal-box">
+    <h3>?</h3>
+    <p>1→5 · <span data-i18n="how.2d"></span><br><span data-i18n="how.4d"></span></p>
+    <button id="btnCloseModal" class="btn primary">OK</button>
+  </div>
+</div>
+
+<script src="i18n_dict.js"></script>
+<script src="i18n.js"></script><script src="session.js"></script>
+<script src="menu.js"></script>
+<script src="dtable.js"></script>
+<script src="game.js"></script>
+<script src="net.js"></script>
+<script src="ads.js"></script>
+<script>
+window.MODE = 'local'; window.LOCAL_SIZE = 3; window.BOT_LEVEL = 3; window.LOCAL_PLAYERS = 2;
+const tabs = { local: document.getElementById('tabLocal'), bot: document.getElementById('tabBot'), online: document.getElementById('tabOnline'), top: document.getElementById('tabTop'), create: document.getElementById('tabCreate') };
+function showOnlineView(v) {
+  ['lobbyView', 'topView', 'createView'].forEach(id => document.getElementById(id).classList.toggle('hidden', id !== v));
+}
+function setMode(m) {
+  window.MODE = (m === 'top' || m === 'create') ? 'online' : m;
+  Object.entries(tabs).forEach(([k, el]) => el.classList.toggle('active', k === m));
+  const isOnline = (m === 'online' || m === 'top' || m === 'create');
+  document.getElementById('localOpts').classList.toggle('hidden', isOnline);
+  document.getElementById('onlineOpts').classList.toggle('hidden', !isOnline);
+  document.getElementById('botLevelWrap').classList.toggle('hidden', m !== 'bot');
+  document.getElementById('log').innerHTML = '';
+  if (isOnline) {
+    document.getElementById('boardArea').classList.add('hidden');
+    document.getElementById('roomView').classList.add('hidden');
+    document.getElementById('chatSection').classList.add('hidden');
+    showOnlineView(m === 'top' ? 'topView' : m === 'create' ? 'createView' : 'lobbyView');
+    Net.init();
+    if (m === 'top') Net.leaderboard(25);
+    const pre = new URLSearchParams(location.search).get('room');
+    if (pre) document.getElementById('roomInput').value = pre.toUpperCase();
+  } else {
+    starter = 1;
+    document.getElementById('boardArea').classList.remove('hidden');
+    window.LOCAL_SIZE = Number(document.getElementById('localSize').value || '3');
+    window.BOT_LEVEL = Number(document.getElementById('botLevel').value || '3');
+    window.LOCAL_PLAYERS = Number(document.getElementById('localPlayers').value || '2');
+    initState(window.LOCAL_SIZE, window.LOCAL_PLAYERS); render();
+  }
+}
+tabs.local.addEventListener('click', () => setMode('local'));
+tabs.bot.addEventListener('click', () => setMode('bot'));
+tabs.online.addEventListener('click', () => setMode('online'));
+tabs.top.addEventListener('click', () => setMode('top'));
+tabs.create.addEventListener('click', () => setMode('create'));
+document.getElementById('btnApplyOpts').addEventListener('click', () => {
+  if (window.MODE === 'online') return;
+  starter = 1;
+  window.LOCAL_SIZE = Number(document.getElementById('localSize').value || '3');
+  window.BOT_LEVEL = Number(document.getElementById('botLevel').value || '3');
+  window.LOCAL_PLAYERS = Number(document.getElementById('localPlayers').value || '2');
+  document.getElementById('log').innerHTML = '';
+  initState(window.LOCAL_SIZE, window.LOCAL_PLAYERS); render();
+});
+document.getElementById('btnCreate').addEventListener('click', () => Net.create());
+document.getElementById('btnJoin').addEventListener('click', () => Net.join());
+document.getElementById('btnRejoin').addEventListener('click', () => Net.rejoin());
+document.getElementById('btnRefresh').addEventListener('click', () => { Net.tables(); Net.leaderboard(); });
+document.getElementById('btnLeave').addEventListener('click', () => Net.leave());
+document.getElementById('btnSend').addEventListener('click', () => Net.sendChat());
+document.getElementById('chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') Net.sendChat(); });
+document.getElementById('btnCopy').addEventListener('click', async () => {
+  const link = document.getElementById('roomLink').textContent || location.href;
+  try { await navigator.clipboard.writeText(link); } catch (e) {
+    const t = document.createElement('textarea'); t.value = link;
+    document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+  }
+});
+const _qs = new URLSearchParams(location.search);
+if (_qs.get('room')) setMode('online');
+else if (_qs.get('mode') === 'bot') setMode('bot');
+setInterval(() => {
+  const el = document.getElementById('turnTimer');
+  if (!el) return;
+  const d = window.roomDeadline;
+  if (!d || window.MODE !== 'online') { el.textContent = ''; return; }
+  const s = Math.max(0, Math.ceil((d - Date.now()) / 1000));
+  el.textContent = s > 0 ? `⏳ ${s}s` : '';
+  el.style.color = s <= 5 && s > 0 ? 'var(--red)' : '';
+}, 500);
+</script>
+</body>
+</html>

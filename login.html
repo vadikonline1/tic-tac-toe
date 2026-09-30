@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Login — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="lg.title">Intră în cont</h2>
+  <div class="online-panel form-box">
+    <label><span data-i18n="au.user">Username</span><input id="l_user" maxlength="80" autocomplete="username"></label>
+    <label><span data-i18n="au.pass">Parolă</span><input id="l_pass" type="password" autocomplete="current-password"></label>
+    <div class="online-row"><button id="l_go" class="btn small" data-i18n="au.in"></button><span id="l_msg" class="hint"></span></div>
+    <div id="forceWrap" class="hidden">
+      <p data-i18n="pw.must"></p>
+      <label><span data-i18n="pw.set"></span><input id="l_new" type="password" autocomplete="new-password"></label>
+      <div class="online-row"><button id="l_set" class="btn small" data-i18n="cf.save"></button></div>
+    </div>
+    <p><span data-i18n="lg.noacc"></span> <a href="register.html" data-i18n="au.reg"></a> · <a href="recovery.html" data-i18n="rc.title"></a></p>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="auth.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  let changeToken = null, pendingAdmin = false;
+  const msg = t => document.getElementById('l_msg').textContent = t;
+  const ws = AuthPages.conn((s, m) => {
+    if (m.t === 'auth' && m.user && m.token) {
+      if (window.Session) Session.save(m);
+      location.href = AuthPages.nextUrl(m.isAdmin ? 'admin.html#email' : 'play.html');
+    }
+    else if (m.t === 'mustChange') {
+      changeToken = m.changeToken; pendingAdmin = !!m.isAdmin;
+      document.getElementById('forceWrap').classList.remove('hidden');
+      msg(T('pw.must'));
+    }
+    else if (m.t === 'passwordSet') {
+      if (window.Session) Session.save(m);
+      msg(T('pw.done'));
+      location.href = (pendingAdmin || (m && m.isAdmin)) ? 'admin.html#email' : 'profile.html';
+    }
+    else if (m.t === 'error') msg('⚠ ' + m.reason);
+  });
+  document.getElementById('l_go').addEventListener('click', () => {
+    ws.send(JSON.stringify({ t: 'login', user: document.getElementById('l_user').value, pass: document.getElementById('l_pass').value }));
+  });
+  document.getElementById('l_pass').addEventListener('keydown', e => { if (e.key === 'Enter') document.getElementById('l_go').click(); });
+  document.getElementById('l_set').addEventListener('click', () => {
+    ws.send(JSON.stringify({ t: 'changePass', token: changeToken, pass: document.getElementById('l_new').value }));
+  });
+})();
+</script>
+</body></html>

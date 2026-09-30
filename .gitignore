@@ -1,0 +1,9 @@
+# runtime / secrete / date locale — NU se comit
+node_modules/
+.env
+users.json
+sessions.json
+ads.json
+outbox/
+*.log
+.DS_Store

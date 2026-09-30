@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Recovery — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="rc.title">Recuperare parolă</h2>
+  <div class="online-panel form-box">
+    <p class="hint" data-i18n="rc.sub"></p>
+    <label><span data-i18n="au.mail">Email</span><input id="f_mail" maxlength="80"></label>
+    <div class="online-row"><button id="f_go" class="btn small" data-i18n="rc.send"></button><span id="f_msg" class="hint"></span></div>
+    <div id="resetWrap" class="hidden">
+      <p class="hint" data-i18n="rc.sent"></p>
+      <label><span data-i18n="cf.code">Cod</span><input id="f_token"></label>
+      <label><span data-i18n="rc.newp">Parolă nouă</span><input id="f_pass" type="password"></label>
+      <div class="online-row"><button id="f_save" class="btn small" data-i18n="rc.save"></button></div>
+    </div>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="auth.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  const msg = t => document.getElementById('f_msg').textContent = t;
+  const q = new URLSearchParams(location.search).get('token');
+  if (q) { document.getElementById('f_token').value = q; document.getElementById('resetWrap').classList.remove('hidden'); }
+  const ws = AuthPages.conn((s, m) => {
+    if (m.t === 'forgotSent') { document.getElementById('resetWrap').classList.remove('hidden'); msg(T('rc.sent')); }
+    else if (m.t === 'passwordSet') { msg(T('cf.done')); setTimeout(() => location.href = 'login.html', 1200); }
+    else if (m.t === 'error') msg('⚠ ' + m.reason);
+  });
+  document.getElementById('f_go').addEventListener('click', () => {
+    ws.send(JSON.stringify({ t: 'forgot', email: document.getElementById('f_mail').value }));
+  });
+  document.getElementById('f_save').addEventListener('click', () => {
+    ws.send(JSON.stringify({ t: 'resetPass', token: document.getElementById('f_token').value.trim(), pass: document.getElementById('f_pass').value }));
+  });
+})();
+</script>
+</body></html>

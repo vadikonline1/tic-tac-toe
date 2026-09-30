@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Register — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="rg.title">Creează cont</h2>
+  <div class="online-panel form-box">
+    <div class="online-row">
+      <label><span data-i18n="au.first">Prenume</span><input id="r_first" maxlength="40"></label>
+      <label><span data-i18n="au.last">Nume</span><input id="r_last" maxlength="40"></label>
+    </div>
+    <label><span data-i18n="au.user">Username</span><input id="r_user" maxlength="16"></label>
+    <label><span data-i18n="au.mail">Email</span><input id="r_mail" maxlength="80"></label>
+    <div class="online-row"><button id="r_go" class="btn small" data-i18n="au.create"></button><span id="r_msg" class="hint"></span></div>
+    <p><span data-i18n="rg.have"></span> <a href="login.html" data-i18n="au.login"></a></p>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="auth.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  const msg = t => document.getElementById('r_msg').textContent = t;
+  const ws = AuthPages.conn((s, m) => {
+    if (m.t === 'registered') msg(T('au.check') + ' → confirm.html');
+    else if (m.t === 'auth' && m.user) {
+      document.getElementById('r_go').disabled = true;
+      document.getElementById('r_msg').textContent = T('e.already', { n: m.user.name }) + ' → ';
+      const a = document.createElement('a'); a.href = 'play.html'; a.className = 'btn small'; a.textContent = '▶';
+      document.getElementById('r_msg').appendChild(a);
+    }
+    else if (m.t === 'error') msg('⚠ ' + m.reason);
+  });
+  document.getElementById('r_go').addEventListener('click', () => {
+    ws.send(JSON.stringify({ t: 'register', firstName: document.getElementById('r_first').value, lastName: document.getElementById('r_last').value, username: document.getElementById('r_user').value, email: document.getElementById('r_mail').value }));
+  });
+})();
+</script>
+</body></html>

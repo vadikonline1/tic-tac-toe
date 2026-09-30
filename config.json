@@ -1,0 +1,71 @@
+{
+ "rating": {
+  "start": 1000,
+  "stepPerLevel": 100,
+  "kHuman": 32,
+  "kBot": 16,
+  "anonRating": 1000
+ },
+ "maxLevel": 10,
+ "brackets": [
+  {
+   "from": 1,
+   "to": 3,
+   "size": 3,
+   "accessMin": null
+  },
+  {
+   "from": 4,
+   "to": 5,
+   "size": 4,
+   "accessMin": null
+  },
+  {
+   "from": 6,
+   "to": 7,
+   "size": 5,
+   "accessMin": null
+  },
+  {
+   "from": 8,
+   "to": 10,
+   "size": 6,
+   "accessMin": null
+  }
+ ],
+ "winLen": {
+  "3": 3,
+  "4": 4,
+  "5": 4,
+  "6": 5,
+  "7": 5
+ },
+ "copiesPerSize": 1,
+ "prune": {
+  "unactivatedMinutes": 60,
+  "inactiveDays": 365,
+  "warnDays": [
+   60,
+   30,
+   1
+  ]
+ },
+ "email": {
+  "mode": "outbox",
+  "from": "noreply@tic-tak-tok.local",
+  "smtp": {
+   "host": "",
+   "port": 587,
+   "user": "",
+   "pass": ""
+  }
+ },
+ "ads": {
+  "enabled": true,
+  "adsenseClient": "ca-pub-9949545458988251",
+  "maxSlotsPage": 2
+ },
+ "adminEmails": [
+  "admin@matroshka.local"
+ ]
+}

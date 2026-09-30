@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>New users — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section"><h2 data-i18n="un.title"></h2><p class="subtitle" data-i18n="un.sub"></p><div id="list"></div></main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="dtable.js"></script><script src="ads.js"></script>
+<script>
+(function(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+  ws.onopen = () => ws.send(JSON.stringify({t:'newUsers', limit:24}));
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.t !== 'newUsers') return;
+    const cols = [
+      { t: T('au.user'), w: '2fr' },
+      { t: T('rt.level'), w: '1fr' },
+      { t: T('un.joined'), w: '1fr' },
+      { t: T('nav.profile'), w: 'auto' },
+    ];
+    const rows = m.list.map(u => [
+      u.firstName ? `${u.firstName} (@${u.name})` : '@' + u.name,
+      `Nv ${u.level} ${u.levelName || ''}`,
+      u.memberSince ? new Date(u.memberSince).toLocaleDateString() : '—',
+      { a: { href: 'profile.html?u=' + encodeURIComponent(u.name), text: '→' } },
+    ]);
+    DTable(document.getElementById('list'), cols, rows, '—');
+    ws.close();
+  };
+})();
+</script>
+</body></html>

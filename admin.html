@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Admin — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="ad.title">Admin</h2>
+  <div id="gate" class="online-panel hidden"><span id="gateText" data-i18n="ad.onlyAdmin"></span> <a href="login.html">→</a> <button id="gateRetry" class="btn small ghost-btn">↻</button></div>
+  <div id="panel" class="hidden">
+    <div class="mode-tabs">
+      <button class="tab active" data-tab="cfg" data-i18n="ad.cfg"></button>
+      <button class="tab" data-tab="levels" data-i18n="ad.levels"></button>
+      <button class="tab" data-tab="users" data-i18n="ad.users"></button>
+      <button class="tab" data-tab="ads" data-i18n="ad.ads"></button>
+    </div>
+    <div id="tab-cfg" class="online-panel">
+      <h3 id="email">✉️ <span data-i18n="ad.email">Email</span></h3>
+      <div class="online-row">
+        <label><span data-i18n="ad.mode">Mod</span><select id="e_mode"><option value="outbox">outbox</option><option value="smtp">smtp</option></select></label>
+        <label><span data-i18n="ad.from">Expeditor</span><input id="e_from" style="width:220px"></label>
+        <label><span data-i18n="ad.host">Host</span><input id="e_host" style="width:170px"></label>
+        <label><span data-i18n="ad.port">Port</span><input id="e_port" style="width:80px"></label>
+        <label><span data-i18n="ad.suser">User</span><input id="e_user" style="width:150px"></label>
+        <label><span data-i18n="ad.spass">Pass</span><input id="e_pass" type="password" style="width:150px"></label>
+      </div>
+      <p class="hint">rating / brackets / winLen / prune / ads / adminEmails (JSON)</p>
+      <div class="online-row">
+        <label><span>AdSense ID</span><input id="e_adsense" style="width:260px" placeholder="ca-pub-…"></label>
+      </div>
+      <div class="online-row" style="flex-direction:column;align-items:stretch">
+        <label><span data-i18n="ad.snippet">Snippet</span><textarea id="e_snippet" rows="6" style="width:100%;background:var(--panel);color:var(--input-text);border:1px solid var(--line);border-radius:10px" placeholder="<script …>…"></textarea></label>
+      </div>
+      <h3>📄 <span data-i18n="ad.adstxt">ads.txt</span> <button id="adsTxtLoad" class="btn small ghost-btn" data-i18n="ad.load"></button></h3>
+      <textarea id="ads_txt" rows="3" style="width:100%;background:var(--panel);color:var(--input-text);border:1px solid var(--line);border-radius:10px"></textarea>
+      <div class="online-row"><button id="adsTxtSave" class="btn small" data-i18n="ad.save"></button><span id="adsTxtMsg" class="hint"></span></div>
+      <textarea id="cfg" rows="22" style="width:100%;background:var(--panel);color:var(--input-text);border:1px solid var(--line);border-radius:10px"></textarea>
+      <div class="online-row"><button id="saveCfg" class="btn small" data-i18n="ad.save"></button><span id="cfgMsg" class="hint"></span></div>
+      <div class="online-row"><button id="prune" class="btn small ghost-btn">🧹 pruneNow</button><span id="pruneMsg" class="hint"></span></div>
+    </div>
+    <div id="tab-levels" class="online-panel hidden">
+      <div class="online-row">
+        <label><span data-i18n="ad.max">Nivel maxim</span><input id="lv_max" style="width:80px" type="number" min="10" max="15"></label>
+        <button id="lv_add" class="btn small ghost-btn" data-i18n="ad.add"></button>
+        <span id="lv_msg" class="hint"></span>
+      </div>
+      <p class="hint">Ex: Nivel 11 → tablă 7×7, acces >9 (accessMin 10). Intră doar nivelele [accessMin … nivel].</p>
+      <div id="lv_table" class="tables"></div>
+    </div>
+    <div id="levelModal" class="modal hidden">
+      <div class="modal-box form-box">
+        <h3>Nivel <span id="lv_mtitle"></span></h3>
+        <div class="online-row">
+          <label><span data-i18n="ad.from2">de la</span><input id="lv_from" type="number" min="1" max="15"></label>
+          <label><span data-i18n="ad.to2">la</span><input id="lv_to" type="number" min="1" max="15"></label>
+          <label><span data-i18n="ad.size2">tabla</span><input id="lv_size" type="number" min="3" max="8"></label>
+          <label><span data-i18n="ad.access">Acces</span><input id="lv_access" type="number" min="1" max="15" placeholder="gol = nivel-1"></label>
+        </div>
+        <div class="hero-btns">
+          <button id="lv_ok" class="btn primary">OK</button>
+          <button id="lv_cancel" class="btn ghost">×</button>
+        </div>
+      </div>
+    </div>
+    <div id="tab-users" class="online-panel hidden">
+      <div class="online-row"><input id="uq" data-i18n-ph="ad.search"><button id="usearch" class="btn small">OK</button></div>
+      <div id="ulist" class="tables"></div>
+    </div>
+    <div id="tab-ads" class="online-panel hidden"><div id="alist" class="tables"></div></div>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script><script src="dtable.js"></script>
+<script>
+(function(){
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+  let lastCfg = null;
+  function renderLevels(cfg) {
+    document.getElementById('lv_max').value = cfg.maxLevel || 10;
+    if (!window.DTable) return;
+    const cols = [
+      { t: T('ad.levels'), w: '2fr' },
+      { t: T('tb.size'), w: '1fr' },
+      { t: T('ad.access'), w: '1fr' },
+      { t: '', w: 'auto' },
+    ];
+    const rows = (cfg.brackets || []).map((b, i) => {
+      const acc = (b.accessMin === null || b.accessMin === undefined || b.accessMin === '') ? ((b.from - 1) + '…' + b.to) : (b.accessMin + '…' + b.to);
+      return [
+        `Nivel ${b.from}–${b.to}`,
+        `${b.size}×${b.size}`,
+        acc,
+        { btns: [
+          { text: '✏️', click: () => openLevelModal(i) },
+          { text: '×', click: () => { lastCfg.brackets.splice(i, 1); renderLevels(lastCfg); syncLevelsToJson(); } },
+        ] },
+      ];
+    });
+    DTable(document.getElementById('lv_table'), cols, rows, '—');
+  }
+  let lvEditIdx = -1;
+  function openLevelModal(i) {
+    if (!lastCfg) return;
+    lvEditIdx = i;
+    let b;
+    if (i >= 0) b = lastCfg.brackets[i];
+    else {
+      const last = (lastCfg.brackets || [])[(lastCfg.brackets || []).length - 1];
+      const from = last ? last.to + 1 : 11;
+      b = { from, to: from, size: 7, accessMin: from - 1 };
+    }
+    document.getElementById('lv_mtitle').textContent = i >= 0 ? `#${i + 1}` : '+';
+    document.getElementById('lv_from').value = b.from;
+    document.getElementById('lv_to').value = b.to;
+    document.getElementById('lv_size').value = b.size;
+    document.getElementById('lv_access').value = (b.accessMin === null || b.accessMin === undefined) ? '' : b.accessMin;
+    document.getElementById('levelModal').classList.remove('hidden');
+  }
+  ws.onopen = () => ws.send(JSON.stringify({t:'hello', token: (window.Session ? Session.get().token : null) || ''}));
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.t === 'auth') {
+      if (window.Session) Session.save(m);
+      const role = m.role || (m.isAdmin ? 'admin' : (m.user ? 'user' : 'guest'));
+      if (role === 'admin') { document.getElementById('panel').classList.remove('hidden'); ws.send(JSON.stringify({t:'adminGetConfig'})); ws.send(JSON.stringify({t:'adminUsers', q:''})); ws.send(JSON.stringify({t:'adminAds'})); }
+      else {
+        const g = document.getElementById('gate');
+        g.classList.remove('hidden');
+        document.getElementById('gateText').textContent = m.user ? `${m.user.name}: ${T('ad.onlyAdmin')}` : T('ad.onlyAdmin');
+      }
+    }
+    else if (m.t === 'adminConfig') {
+      const cfg = m.config || {};
+      lastCfg = cfg;
+      document.getElementById('cfg').value = JSON.stringify(cfg, null, 1);
+      const em = cfg.email || {};
+      document.getElementById('e_mode').value = em.mode || 'outbox';
+      document.getElementById('e_from').value = em.from || '';
+      document.getElementById('e_host').value = (em.smtp || {}).host || '';
+      document.getElementById('e_port').value = (em.smtp || {}).port || 587;
+      document.getElementById('e_user').value = (em.smtp || {}).user || '';
+      document.getElementById('e_adsense').value = (cfg.ads || {}).adsenseClient || '';
+      document.getElementById('e_snippet').value = (cfg.ads || {}).adsenseSnippet || '';
+      renderLevels(cfg);
+      if (m.saved) { document.getElementById('cfgMsg').textContent = T('ad.saved'); document.getElementById('lv_msg').textContent = T('ad.saved'); }
+    }
+    else if (m.t === 'adminAdsTxt') { document.getElementById('ads_txt').value = m.txt || ''; }
+    else if (m.t === 'adminUsers') {
+      if (!window.DTable) return;
+      const cols = [
+        { t: T('au.user'), w: '1.5fr' },
+        { t: T('au.mail'), w: '2fr' },
+        { t: T('rt.level'), w: '1fr' },
+        { t: T('rt.rating'), w: 'auto' },
+        { t: T('rt.games'), w: 'auto' },
+        { t: T('ad.seen'), w: 'auto' },
+        { t: '', w: 'auto' },
+      ];
+      const rows = m.list.map(u => [
+        `@${u.name}${u.active ? '' : ' [inactiv]'}${u.premium ? ' ⭐' : ''}`,
+        u.email || '—',
+        `Nv ${u.level}`,
+        u.rating || 0,
+        u.games || 0,
+        u.lastLogin ? new Date(u.lastLogin).toLocaleDateString() : '—',
+        { btns: [
+          { text: T('ad.reset'), click: () => ws.send(JSON.stringify({ t: 'adminResetPass', user: u.name })) },
+          { text: T('ad.del'), click: () => { if (confirm(u.name + '?')) ws.send(JSON.stringify({ t: 'adminDeleteUser', user: u.name })); } },
+        ] },
+      ]);
+      DTable(document.getElementById('ulist'), cols, rows, '—');
+    }
+    else if (m.t === 'adminAds') {
+      if (!window.DTable) return;
+      const cols = [
+        { t: 'ID', w: 'auto' },
+        { t: T('ao.atitle'), w: '2fr' },
+        { t: T('ao.slot'), w: 'auto' },
+        { t: T('tb.status'), w: 'auto' },
+        { t: T('ao.link'), w: '2fr' },
+        { t: T('ao.start') + '→' + T('ao.end'), w: 'auto' },
+        { t: T('ad.by'), w: 'auto' },
+        { t: '', w: 'auto' },
+      ];
+      const rows = m.list.map(o => [
+        o.id,
+        o.title + (o.paid ? ' 💰' : ''),
+        o.slot,
+        o.status,
+        { a: { href: o.link, text: o.link, blank: true } },
+        `${o.start || '—'} → ${o.end || '—'}`,
+        o.by,
+        { btns: [
+          { text: T('ad.approve'), click: () => ws.send(JSON.stringify({ t: 'adminAd', id: o.id, action: 'approve' })) },
+          { text: T('ad.paid'), click: () => ws.send(JSON.stringify({ t: 'adminAd', id: o.id, action: 'paid' })) },
+          { text: T('ad.reject'), click: () => ws.send(JSON.stringify({ t: 'adminAd', id: o.id, action: 'reject' })) },
+          { text: T('ad.del'), click: () => ws.send(JSON.stringify({ t: 'adminAd', id: o.id, action: 'delete' })) },
+        ] },
+      ]);
+      DTable(document.getElementById('alist'), cols, rows, '—');
+    }
+    else if (m.t === 'adminDone') {
+      if (m.what === 'adstxt') document.getElementById('adsTxtMsg').textContent = T('ad.saved');
+      else ws.send(JSON.stringify({t:'adminUsers', q:document.getElementById('uq').value}));
+    }
+    else if (m.t === 'pruneReport') { document.getElementById('pruneMsg').textContent = JSON.stringify(m.rep); }
+    else if (m.t === 'error') { document.getElementById('cfgMsg').textContent = '⚠ ' + m.reason; }
+  };
+  document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
+    document.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('active', x === b));
+    ['cfg','levels','users','ads'].forEach(t => document.getElementById('tab-'+t).classList.toggle('hidden', t !== b.getAttribute('data-tab')));
+  }));
+  document.getElementById('saveCfg').addEventListener('click', () => {
+    try {
+      const cfg = JSON.parse(document.getElementById('cfg').value);
+      cfg.email = cfg.email || {};
+      cfg.email.mode = document.getElementById('e_mode').value;
+      cfg.email.from = document.getElementById('e_from').value;
+      cfg.email.smtp = { host: document.getElementById('e_host').value, port: Number(document.getElementById('e_port').value || '587'), user: document.getElementById('e_user').value, pass: document.getElementById('e_pass').value || (cfg.email.smtp || {}).pass || '' };
+      cfg.ads = cfg.ads || {};
+      cfg.ads.adsenseClient = document.getElementById('e_adsense').value.trim();
+      cfg.ads.adsenseSnippet = document.getElementById('e_snippet').value;
+      ws.send(JSON.stringify({t:'adminSaveConfig', config: cfg}));
+    }
+    catch (e) { document.getElementById('cfgMsg').textContent = 'JSON invalid'; }
+  });
+  // nivele: adauga rand / salveaza (merge in JSON + trimite)
+  document.getElementById('lv_add').addEventListener('click', () => openLevelModal(-1));
+  document.getElementById('lv_max').addEventListener('change', syncLevelsToJson);
+  document.getElementById('lv_cancel').addEventListener('click', () => document.getElementById('levelModal').classList.add('hidden'));
+  document.getElementById('lv_ok').addEventListener('click', () => {
+    if (!lastCfg) return;
+    const from = Number(document.getElementById('lv_from').value);
+    const to = Number(document.getElementById('lv_to').value);
+    const size = Number(document.getElementById('lv_size').value);
+    const am = document.getElementById('lv_access').value.trim();
+    if (!from || !to || to < from || !size) { document.getElementById('lv_msg').textContent = '!'; return; }
+    const b = { from, to, size, accessMin: am === '' ? null : Number(am) };
+    if (lvEditIdx >= 0) lastCfg.brackets[lvEditIdx] = b;
+    else lastCfg.brackets.push(b);
+    lastCfg.brackets.sort((x, y) => x.from - y.from);
+    document.getElementById('levelModal').classList.add('hidden');
+    renderLevels(lastCfg);
+    syncLevelsToJson();
+    document.getElementById('lv_msg').textContent = '→ Salvează configurația';
+  });
+  // un SINGUR buton de salvare (saveCfg din tab Config); nivelele se sincronizeaza in JSON automat
+  function syncLevelsToJson() {
+    try {
+      const cfg = JSON.parse(document.getElementById('cfg').value);
+      cfg.maxLevel = Math.min(15, Math.max(10, Number(document.getElementById('lv_max').value) || 10));
+      cfg.brackets = (lastCfg && lastCfg.brackets) || cfg.brackets;
+      document.getElementById('cfg').value = JSON.stringify(cfg, null, 1);
+      lastCfg = cfg;
+    } catch (e) {}
+  }
+  document.getElementById('adsTxtLoad').addEventListener('click', () => ws.send(JSON.stringify({t:'adminGetAdsTxt'})));
+  document.getElementById('adsTxtSave').addEventListener('click', () => ws.send(JSON.stringify({t:'adminSaveAdsTxt', txt: document.getElementById('ads_txt').value})));
+  document.getElementById('usearch').addEventListener('click', () => ws.send(JSON.stringify({t:'adminUsers', q:document.getElementById('uq').value})));
+  document.getElementById('prune').addEventListener('click', () => ws.send(JSON.stringify({t:'pruneNow'})));
+  document.getElementById('gateRetry').addEventListener('click', () => location.reload());
+})();
+</script>
+</body></html>

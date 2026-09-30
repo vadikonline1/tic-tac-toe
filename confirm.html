@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Confirm — TIC-TAK-TOK</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+<main class="rules-section">
+  <h2 data-i18n="cf.title"></h2>
+  <p class="subtitle" data-i18n="cf.sub"></p>
+  <div class="online-panel form-box" id="box">
+    <div class="online-row">
+      <label><span data-i18n="cf.code">Cod</span><input id="token" style="width:280px"></label>
+      <button id="go" class="btn small" data-i18n="cf.btn">Confirmă</button>
+    </div>
+    <div id="passWrap" class="hidden">
+      <p data-i18n="cf.passs"></p>
+      <div class="online-row">
+        <label><span data-i18n="au.pass">Parolă</span><input id="pass" type="password"></label>
+        <button id="save" class="btn small" data-i18n="cf.save">Salvează</button>
+      </div>
+    </div>
+    <div id="delWrap" class="hidden">
+      <button id="delGo" class="btn small" data-i18n="pf.del">Șterge</button>
+    </div>
+    <div id="msg" class="net-status"></div>
+  </div>
+</main>
+<footer><p>🪆 TIC-TAK-TOK • <a href="index.html" data-i18n="ft.home"></a></p></footer>
+<script src="i18n_dict.js"></script><script src="i18n.js"></script><script src="session.js"></script><script src="menu.js"></script>
+<script>
+(function(){
+  const q = new URLSearchParams(location.search);
+  const kind = q.get('kind') || 'confirm';
+  let token = q.get('token') || '';
+  if (token) document.getElementById('token').value = token;
+  if (kind === 'del') document.getElementById('delWrap').classList.remove('hidden');
+  const proto = location.protocol==='https:'?'wss':'ws';
+  const ws = new WebSocket(`${proto}://${location.host}`);
+  const msg = t => document.getElementById('msg').textContent = t;
+  ws.onmessage = ev => {
+    const m = JSON.parse(ev.data);
+    if (m.t === 'confirmed') {
+      token = m.setToken;
+      document.getElementById('passWrap').classList.remove('hidden');
+      document.getElementById('go').disabled = true;
+    }
+    else if (m.t === 'passwordSet') { msg(T('cf.done')); }
+    else if (m.t === 'deleted') { msg('OK ✓'); }
+    else if (m.t === 'error') { msg('⚠ ' + m.reason); }
+  };
+  document.getElementById('go').addEventListener('click', () => {
+    token = document.getElementById('token').value.trim();
+    if (kind === 'confirm') ws.send(JSON.stringify({t:'confirmEmail', token}));
+    else if (kind === 'reset') { document.getElementById('passWrap').classList.remove('hidden'); }
+  });
+  document.getElementById('save').addEventListener('click', () => {
+    const p = document.getElementById('pass').value;
+    token = (document.getElementById('token').value.trim()) || token;
+    if (kind === 'reset') ws.send(JSON.stringify({t:'resetPass', token, pass:p}));
+    else ws.send(JSON.stringify({t:'setPassword', token, pass:p}));
+  });
+  document.getElementById('delGo').addEventListener('click', () => {
+    token = document.getElementById('token').value.trim() || token;
+    ws.send(JSON.stringify({t:'confirmDelete', token}));
+  });
+})();
+</script>
+</body></html>

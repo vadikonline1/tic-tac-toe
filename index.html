@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TIC-TAK-TOK — Tic-Tac-Toe</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="siteMenu"><header class="nav"><a class="logo" href="index.html">🪆 TIC-TAK-TOK</a><nav><a href="play.html">Joacă</a><a href="rating.html">Rating</a><a href="faq.html">FAQ</a><a class="btn small" href="login.html">Login</a></nav></header></div>
+
+<section class="hero">
+  <div class="hero-text">
+    <h1><span data-i18n="hero.title1">UN NOU FEL</span><br><span data-i18n="hero.title2">DE TIC-TAC-TOE</span></h1>
+    <p data-i18n="hero.sub">Fă-ți cont…</p>
+    <div class="hero-btns">
+      <a href="play.html" class="btn primary" data-i18n="hero.play">▶ JOACĂ ACUM</a>
+      <a href="play.html?mode=bot" class="btn ghost" data-i18n="hero.bot">🤖 JOACĂ CU BOTUL</a>
+      <a href="#how" class="btn ghost" data-i18n="hero.how">CUM FUNCȚIONEAZĂ</a>
+    </div>
+  </div>
+  <div class="hero-board">
+    <div class="demo-stack">
+      <div class="piece p-red s5"><i>5</i></div>
+      <div class="piece p-blue s3"><i>3</i></div>
+      <div class="piece p-red s2"><i>2</i></div>
+    </div>
+    <p class="hint" data-i18n="hero.stack">CLIC → …</p>
+    <a href="play.html" class="btn primary" data-i18n="hero.open">Deschide jocul →</a>
+  </div>
+</section>
+
+<div class="adslot-wrap"><div data-adslot="hero"></div></div>
+
+<section id="how" class="cards-section">
+  <h2 data-i18n="how.title">Cum se joacă</h2>
+  <div class="cards">
+    <div class="card"><b>1</b><h3 data-i18n="how.1t"></h3><p data-i18n="how.1d"></p></div>
+    <div class="card"><b>2</b><h3 data-i18n="how.2t"></h3><p data-i18n="how.2d"></p></div>
+    <div class="card"><b>3</b><h3 data-i18n="how.3t"></h3><p data-i18n="how.3d"></p></div>
+    <div class="card"><b>4</b><h3 data-i18n="how.4t"></h3><p data-i18n="how.4d"></p></div>
+    <div class="card"><b>5</b><h3 data-i18n="how.5t"></h3><p data-i18n="how.5d"></p></div>
+  </div>
+</section>
+
+<section id="nivele" class="rules-section">
+  <h2 data-i18n="lv.title">⭐ 10 nivele</h2>
+  <ol class="rules">
+    <li><b>L1–L3</b> → <code>3×3</code> · <b>L4–L5</b> → <code>4×4</code> · <b>L6–L7</b> → <code>5×5</code> · <b>L8–L10</b> → <code>6×6</code></li>
+    <li data-i18n="lv.access"></li>
+    <li data-i18n="lv.bot"></li>
+    <li data-i18n="lv.fill"></li>
+    <li data-i18n="lv.anon"></li>
+  </ol>
+</section>
+
+<section id="features" class="cards-section">
+  <h2 data-i18n="ft.title"></h2>
+  <div class="cards">
+    <div class="card"><h3 data-i18n="ft.1t"></h3><p data-i18n="ft.1d"></p></div>
+    <div class="card"><h3 data-i18n="ft.2t"></h3><p data-i18n="ft.2d"></p></div>
+    <div class="card"><h3 data-i18n="ft.3t"></h3><p data-i18n="ft.3d"></p></div>
+    <div class="card"><h3 data-i18n="ft.4t"></h3><p data-i18n="ft.4d"></p></div>
+    <div class="card"><h3 data-i18n="ft.5t"></h3><p data-i18n="ft.5d"></p></div>
+    <div class="card"><h3 data-i18n="ft.6t"></h3><p data-i18n="ft.6d"></p></div>
+  </div>
+</section>
+
+<section class="cards-section">
+  <div class="online-panel" style="text-align:center">
+    <h2 data-i18n="cta.t"></h2>
+    <div class="hero-btns" style="justify-content:center">
+      <a href="register.html" class="btn primary" data-i18n="cta.b"></a>
+      <a href="play.html" class="btn ghost" data-i18n="hero.play"></a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>🪆 TIC-TAK-TOK •
+    <a href="gdpr.html" data-i18n="nav.gdpr">GDPR</a> ·
+    <a href="faq.html" data-i18n="nav.faq">FAQ</a> ·
+    <a href="rating.html" data-i18n="nav.rating">Rating</a> ·
+    <a href="users.html" data-i18n="nav.users">Nou-veniți</a> ·
+    <a href="adsorder.html" data-i18n="nav.ads">Reclamă</a>
+  </p>
+</footer>
+
+<script src="i18n_dict.js"></script>
+<script src="i18n.js"></script><script src="session.js"></script>
+<script src="menu.js"></script>
+<script src="ads.js"></script>
+</body>
+</html>
